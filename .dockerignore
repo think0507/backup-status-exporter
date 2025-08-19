@@ -1,0 +1,18 @@
+# Git/CI
+.git
+.github
+.gitignore
+
+# IDE
+.vscode
+.idea
+
+# OS
+.DS_Store
+
+# 빌드 산출물
+backup-exporter
+*.out
+
+# 기타 불필요
+vendor

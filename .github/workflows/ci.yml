@@ -31,7 +31,7 @@ jobs:
       - name: Set image meta
         id: meta
         run: |
-          IMAGE=your-dockerhub-id/backup-exporter
+          IMAGE=think0507/backup-status-exporter
           SHA_SHORT=${GITHUB_SHA::7}
           if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
             TAG="${GITHUB_REF#refs/tags/}"
