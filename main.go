@@ -48,21 +48,21 @@ func scanRepo(root string) {
 }
 
 func main() {
-	prometheus.MustRegister(lastTS)
+	// 기본(Default) 대신 전용 레지스트리 사용 → go_*, process_* 안 나옴
+	reg := prometheus.NewRegistry()
+	reg.MustRegister(lastTS)
 
 	repoRoot := os.Getenv("REPO_ROOT")
 	if repoRoot == "" {
 		repoRoot = "/backup/borgrepo"
 	}
 
-	// /metrics 요청이 들어올 때마다 최신 스캔 → 메트릭 제공
+	// /metrics 요청 시 스캔 후, 커스텀 레지스트리로만 응답
 	http.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 		scanRepo(repoRoot)
-		// 실제 메트릭 응답
-		promhttp.Handler().ServeHTTP(w, r)
+		promhttp.HandlerFor(reg, promhttp.HandlerOpts{}).ServeHTTP(w, r)
 
-		// 오래 걸리면 로그로만 참고(선택)
 		if d := time.Since(start); d > 2*time.Second {
 			log.Printf("scanRepo took %s\n", d)
 		}
